@@ -13,7 +13,7 @@ class ChartRenderer {
         };
     }
 
-    // 创建Token消耗量分组柱状图
+    // 创建Token消耗量堆叠柱状图
     createTokenUsageChart(data, containerId) {
         const ctx = document.getElementById(containerId);
         if (!ctx) {
@@ -28,15 +28,31 @@ class ChartRenderer {
 
         const canvas = ctx.getContext('2d');
         
-        // 如果是分组数据（按资源包分组）
+        // 如果是分组数据（按资源包分组），转换为堆叠柱状图
         if (data.datasets && Array.isArray(data.datasets)) {
+            // 计算每个时间点的总用量
+            const totals = data.labels.map((_, timeIndex) => {
+                return data.datasets.reduce((sum, dataset) => {
+                    return sum + (dataset.data[timeIndex] || 0);
+                }, 0);
+            });
+            
+            // 创建堆叠柱状图配置
             const chartConfig = {
                 type: 'bar',
                 data: {
                     labels: data.labels || [],
-                    datasets: data.datasets
+                    datasets: data.datasets.map((dataset, index) => ({
+                        ...dataset,
+                        stack: 'tokenUsage',
+                        backgroundColor: this.getColorByIndex(index, 0.8),
+                        borderColor: this.getColorByIndex(index, 1),
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        borderSkipped: false
+                    }))
                 },
-                options: this.getTokenUsageChartOptions()
+                options: this.getStackedTokenUsageChartOptions()
             };
 
             const chart = new Chart(canvas, chartConfig);
@@ -116,6 +132,129 @@ class ChartRenderer {
     }
 
     
+    // 获取堆叠Token用量图表配置
+    getStackedTokenUsageChartOptions() {
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Token消耗量堆叠统计',
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    },
+                    color: '#333'
+                },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        font: {
+                            size: 14
+                        },
+                        color: '#666',
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderWidth: 1,
+                    callbacks: {
+                        title: function(context) {
+                            return `时间: ${context[0].label}`;
+                        },
+                        label: function(context) {
+                            // 如果值为0，不显示tooltip
+                            if (context.parsed.y === 0) {
+                                return null;
+                            }
+                            return `${context.dataset.label}: ${context.parsed.y.toLocaleString()} tokens`;
+                        },
+                        afterBody: function(context) {
+                            // 计算总用量
+                            const total = context.reduce((sum, item) => sum + item.parsed.y, 0);
+                            return `总计: ${total.toLocaleString()} tokens`;
+                        }
+                    },
+                    filter: function(tooltipItem) {
+                        // 过滤掉值为0的tooltip项
+                        return tooltipItem.parsed.y !== 0;
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: '时间',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        color: '#666'
+                    },
+                    grid: {
+                        display: false
+                    },
+                    stacked: true,
+                    ticks: {
+                        color: '#666',
+                        font: {
+                            size: 12
+                        },
+                        callback: function(value, index) {
+                            const labels = this.chart.data.labels;
+                            if (!labels || labels.length === 0) return '';
+                            
+                            // 只显示第一个和最后一个标签
+                            if (index === 0 || index === labels.length - 1) {
+                                return labels[index];
+                            }
+                            return '';
+                        }
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Token用量',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        color: '#666'
+                    },
+                    beginAtZero: true,
+                    stacked: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    ticks: {
+                        color: '#666',
+                        font: {
+                            size: 12
+                        },
+                        callback: function(value) {
+                            return value.toLocaleString();
+                        }
+                    }
+                }
+            },
+            interaction: {
+                mode: 'index',
+                intersect: false
+            }
+        };
+    }
+
     // 获取Token用量图表配置
     getTokenUsageChartOptions() {
         return {

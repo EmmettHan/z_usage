@@ -129,6 +129,7 @@ body {
     padding: 0.75rem;
     transition: all 0.3s ease;
     background-color: #fff;
+    cursor: pointer;
 }
 
 #fileInput:hover {
@@ -139,6 +140,42 @@ body {
 #fileInput:focus {
     border-color: #86b7fe;
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+#fileInput:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+/* 文件选择和时间范围选择布局优化 */
+.file-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.file-section label {
+    margin-bottom: 0;
+    font-weight: 500;
+    color: #495057;
+    white-space: nowrap;
+}
+
+.time-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.time-section label {
+    margin-bottom: 0;
+    font-weight: 500;
+    color: #495057;
+    white-space: nowrap;
+}
+
+.time-section .form-select {
+    min-width: 120px;
 }
 
 
@@ -273,14 +310,26 @@ label {
         padding: 1rem;
     }
     
-    .btn-primary {
-        width: 100%;
-        margin-top: 0.5rem;
+    .file-section,
+    .time-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .file-section label,
+    .time-section label {
+        margin-bottom: 0.25rem;
     }
     
     .form-select,
     .form-control {
         margin-bottom: 0.5rem;
+        width: 100%;
+    }
+    
+    .time-section .form-select {
+        min-width: auto;
     }
 }
 

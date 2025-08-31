@@ -26,23 +26,22 @@
                 <div class="card-body">
                     <div class="row align-items-center">
                         <!-- 数据导入部分 -->
-                        <div class="col-md-5">
-                            <div class="d-flex align-items-center">
-                                <input type="file" id="fileInput" accept=".xlsx,.xls" class="form-control me-2" placeholder="选择Excel文件">
-                                <button id="uploadBtn" class="btn btn-primary">上传并分析</button>
+                        <div class="col-md-6">
+                            <div class="file-section">
+                                <label for="fileInput">选择Excel文件:</label>
+                                <input type="file" id="fileInput" accept=".xlsx,.xls" class="form-control">
                             </div>
                         </div>
                         <!-- 数据筛选部分 -->
-                        <div class="col-md-3">
-                            <label for="timeRange" class="form-label mb-1">时间范围</label>
-                            <select id="timeRange" class="form-select form-select-sm">
-                                <option value="daily">按日</option>
-                                <option value="weekly">按周</option>
-                                <option value="monthly">按月</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <!-- 预留空间 -->
+                        <div class="col-md-6">
+                            <div class="time-section">
+                                <label for="timeRange">时间范围:</label>
+                                <select id="timeRange" class="form-select form-select-sm">
+                                    <option value="daily">按日</option>
+                                    <option value="weekly">按周</option>
+                                    <option value="monthly">按月</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -14,12 +14,6 @@ class App {
 
     // 初始化事件监听器
     initializeEventListeners() {
-        // 文件上传
-        const uploadBtn = document.getElementById('uploadBtn');
-        if (uploadBtn) {
-            uploadBtn.addEventListener('click', () => this.handleFileUpload());
-        }
-
         // 文件选择
         const fileInput = document.getElementById('fileInput');
         if (fileInput) {
@@ -90,16 +84,25 @@ class App {
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 fileInput.files = files;
-                this.handleFileUpload();
+                this.handleFileSelect({ target: { files: files } });
             }
         });
     }
 
     // 处理文件选择
     handleFileSelect(event) {
+        console.log('文件选择事件被触发');
         const file = event.target.files[0];
+        console.log('选择的文件:', file);
         if (file) {
-            this.validateFile(file);
+            if (this.validateFile(file)) {
+                console.log('文件验证通过，开始上传处理');
+                this.handleFileUpload(file);
+            } else {
+                console.log('文件验证失败');
+            }
+        } else {
+            console.log('没有选择文件');
         }
     }
 
@@ -126,16 +129,14 @@ class App {
     }
 
     // 处理文件上传
-    async handleFileUpload() {
-        const fileInput = document.getElementById('fileInput');
-        const file = fileInput.files[0];
+    async handleFileUpload(file) {
+        if (!file) {
+            const fileInput = document.getElementById('fileInput');
+            file = fileInput.files[0];
+        }
         
         if (!file) {
             this.showError('请选择一个Excel文件');
-            return;
-        }
-
-        if (!this.validateFile(file)) {
             return;
         }
 
@@ -298,15 +299,15 @@ class App {
     // 显示/隐藏加载状态
     showLoading(show) {
         this.isLoading = show;
-        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInput = document.getElementById('fileInput');
         
-        if (uploadBtn) {
+        if (fileInput) {
             if (show) {
-                uploadBtn.innerHTML = '<span class="loading"></span> 处理中...';
-                uploadBtn.disabled = true;
+                fileInput.disabled = true;
+                fileInput.style.cursor = 'wait';
             } else {
-                uploadBtn.innerHTML = '上传并分析';
-                uploadBtn.disabled = false;
+                fileInput.disabled = false;
+                fileInput.style.cursor = 'pointer';
             }
         }
     }
@@ -322,9 +323,9 @@ class App {
         errorDiv.textContent = message;
         
         // 添加到页面
-        const uploadBtn = document.getElementById('uploadBtn');
-        if (uploadBtn) {
-            uploadBtn.parentNode.appendChild(errorDiv);
+        const cardBody = document.querySelector('.card-body');
+        if (cardBody) {
+            cardBody.appendChild(errorDiv);
             
             // 3秒后自动消失
             setTimeout(() => {
@@ -340,9 +341,9 @@ class App {
         successDiv.textContent = message;
         
         // 添加到页面
-        const uploadBtn = document.getElementById('uploadBtn');
-        if (uploadBtn) {
-            uploadBtn.parentNode.appendChild(successDiv);
+        const cardBody = document.querySelector('.card-body');
+        if (cardBody) {
+            cardBody.appendChild(successDiv);
             
             // 3秒后自动消失
             setTimeout(() => {

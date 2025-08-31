@@ -18,40 +18,31 @@
 
         <!-- 主要内容 -->
         <div class="container mt-4">
-            <!-- 数据上传区域 -->
+            <!-- 数据控制和筛选区域 -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="card-title">数据导入</h5>
+                    <h5 class="card-title">数据控制和筛选</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <input type="file" id="fileInput" accept=".xlsx,.xls" class="form-control" placeholder="选择Excel文件">
+                    <div class="row align-items-center">
+                        <!-- 数据导入部分 -->
+                        <div class="col-md-5">
+                            <div class="d-flex align-items-center">
+                                <input type="file" id="fileInput" accept=".xlsx,.xls" class="form-control me-2" placeholder="选择Excel文件">
+                                <button id="uploadBtn" class="btn btn-primary">上传并分析</button>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <button id="uploadBtn" class="btn btn-primary">上传并分析</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 筛选控制区域 -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="card-title">数据筛选</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
+                        <!-- 数据筛选部分 -->
                         <div class="col-md-3">
-                            <label for="timeRange">时间范围</label>
+                            <label for="timeRange" class="form-label mb-1">时间范围</label>
                             <select id="timeRange" class="form-select form-select-sm">
                                 <option value="daily">按日</option>
                                 <option value="weekly">按周</option>
                                 <option value="monthly">按月</option>
                             </select>
                         </div>
-                        <div class="col-md-9">
-                            <!-- 留空以保持布局平衡 -->
+                        <div class="col-md-4">
+                            <!-- 预留空间 -->
                         </div>
                     </div>
                 </div>

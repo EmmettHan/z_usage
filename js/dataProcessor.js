@@ -365,6 +365,24 @@ class DataProcessor {
 
         const aggregated = {};
 
+        // 获取日期范围
+        const dates = data.map(item => item['账期']).filter(date => date);
+        if (dates.length === 0) {
+            return {};
+        }
+
+        const minDate = new Date(Math.min(...dates));
+        const maxDate = new Date(Math.max(...dates));
+
+        // 生成完整的日期范围
+        const dateRange = this.generateDateRange(minDate, maxDate, granularity);
+
+        // 初始化所有日期的API请求次数为0
+        dateRange.forEach(dateKey => {
+            aggregated[dateKey] = 0;
+        });
+
+        // 按时间聚合API请求次数
         data.forEach(item => {
             const date = item['账期'];
             if (!date) return;
@@ -386,10 +404,10 @@ class DataProcessor {
                     key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             }
 
-            if (!aggregated[key]) {
-                aggregated[key] = 0;
+            // 确保该日期存在于聚合数据中
+            if (aggregated.hasOwnProperty(key)) {
+                aggregated[key] += item['请求次数 (仅API)'] || 0;
             }
-            aggregated[key] += item['请求次数 (仅API)'] || 0;
         });
 
         // 排序
@@ -400,6 +418,45 @@ class DataProcessor {
 
         this.cache.set(cacheKey, sorted);
         return sorted;
+    }
+
+    // 生成日期范围
+    generateDateRange(minDate, maxDate, granularity = 'daily') {
+        const dateRange = [];
+        const currentDate = new Date(minDate);
+
+        while (currentDate <= maxDate) {
+            let key;
+            switch (granularity) {
+                case 'daily':
+                    key = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+                    dateRange.push(key);
+                    currentDate.setDate(currentDate.getDate() + 1);
+                    break;
+                case 'weekly':
+                    const weekStart = new Date(currentDate);
+                    weekStart.setDate(currentDate.getDate() - currentDate.getDay());
+                    key = `${weekStart.getFullYear()}-${String(weekStart.getMonth() + 1).padStart(2, '0')}-${String(weekStart.getDate()).padStart(2, '0')}`;
+                    if (!dateRange.includes(key)) {
+                        dateRange.push(key);
+                    }
+                    currentDate.setDate(currentDate.getDate() + 7);
+                    break;
+                case 'monthly':
+                    key = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+                    if (!dateRange.includes(key)) {
+                        dateRange.push(key);
+                    }
+                    currentDate.setMonth(currentDate.getMonth() + 1);
+                    break;
+                default:
+                    key = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+                    dateRange.push(key);
+                    currentDate.setDate(currentDate.getDate() + 1);
+            }
+        }
+
+        return dateRange;
     }
 
     // 按时间聚合Token用量（按资源包分组）- 用于分组柱状图
@@ -424,6 +481,26 @@ class DataProcessor {
             }
         });
 
+        // 获取日期范围
+        const dates = data.map(item => item['账期']).filter(date => date);
+        if (dates.length === 0) {
+            return {};
+        }
+
+        const minDate = new Date(Math.min(...dates));
+        const maxDate = new Date(Math.max(...dates));
+
+        // 生成完整的日期范围
+        const dateRange = this.generateDateRange(minDate, maxDate, granularity);
+
+        // 初始化所有日期的所有产品用量为0
+        dateRange.forEach(dateKey => {
+            aggregated[dateKey] = {};
+            products.forEach(product => {
+                aggregated[dateKey][product] = 0;
+            });
+        });
+
         // 按时间聚合每个产品的用量
         data.forEach(item => {
             const date = item['账期'];
@@ -446,17 +523,12 @@ class DataProcessor {
                     key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             }
 
-            if (!aggregated[key]) {
-                aggregated[key] = {};
-                // 初始化所有产品的用量为0
-                products.forEach(product => {
-                    aggregated[key][product] = 0;
-                });
+            // 确保该日期存在于聚合数据中
+            if (aggregated[key]) {
+                const product = item['Tokens资源包名称'] || '未知产品';
+                const usage = item['抵扣用量'] || 0;
+                aggregated[key][product] = (aggregated[key][product] || 0) + usage;
             }
-
-            const product = item['Tokens资源包名称'] || '未知产品';
-            const usage = item['抵扣用量'] || 0;
-            aggregated[key][product] = (aggregated[key][product] || 0) + usage;
         });
 
         // 排序

@@ -60,10 +60,8 @@ class ChartRenderer {
             return chart;
         }
         
-        // 如果是简单数据，创建单根柱子分色显示
+        // 如果是简单数据，创建统一颜色的柱状图
         const values = data.values || [];
-        const backgroundColors = values.map((_, index) => this.getColorByIndex(index, 0.8));
-        const borderColors = values.map((_, index) => this.getColorByIndex(index, 1));
         
         const chartConfig = {
             type: 'bar',
@@ -72,8 +70,8 @@ class ChartRenderer {
                 datasets: [{
                     label: 'Token用量',
                     data: values,
-                    backgroundColor: backgroundColors,
-                    borderColor: borderColors,
+                    backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1,
                     borderRadius: 6,
                     borderSkipped: false
@@ -148,7 +146,7 @@ class ChartRenderer {
                     color: '#333'
                 },
                 legend: {
-                    display: true,
+                    display: false,
                     position: 'top',
                     labels: {
                         font: {
@@ -165,12 +163,17 @@ class ChartRenderer {
                     titleColor: '#fff',
                     bodyColor: '#fff',
                     borderWidth: 1,
+                    displayColors: true,
                     callbacks: {
                         title: function(context) {
-                            return `时间: ${context[0].label}`;
+                            // 总是显示日期标题
+                            if (context && context.length > 0) {
+                                return `时间: ${context[0].label}`;
+                            }
+                            return '';
                         },
                         label: function(context) {
-                            // 如果值为0，不显示tooltip
+                            // 显示所有非0数据项
                             if (context.parsed.y === 0) {
                                 return null;
                             }
@@ -179,12 +182,11 @@ class ChartRenderer {
                         afterBody: function(context) {
                             // 计算总用量
                             const total = context.reduce((sum, item) => sum + item.parsed.y, 0);
+                            if (total === 0) {
+                                return '当日无Token消耗';
+                            }
                             return `总计: ${total.toLocaleString()} tokens`;
                         }
-                    },
-                    filter: function(tooltipItem) {
-                        // 过滤掉值为0的tooltip项
-                        return tooltipItem.parsed.y !== 0;
                     }
                 }
             },
@@ -284,24 +286,44 @@ class ChartRenderer {
                 tooltip: {
                     mode: 'index',
                     intersect: false,
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.9)',
                     titleColor: '#fff',
                     bodyColor: '#fff',
                     borderWidth: 1,
+                    cornerRadius: 8,
+                    padding: 12,
+                    displayColors: false,
                     callbacks: {
                         title: function(context) {
+                            // 检查context是否为空
+                            if (!context || context.length === 0) {
+                                return '';
+                            }
                             return `时间: ${context[0].label}`;
                         },
                         label: function(context) {
-                            // 如果值为0，不显示tooltip
+                            // 显示非0数据项
                             if (context.parsed.y === 0) {
                                 return null;
                             }
                             return `${context.dataset.label}: ${context.parsed.y.toLocaleString()} tokens`;
+                        },
+                        afterLabel: function(context) {
+                            // 添加百分比信息
+                            const total = context.chart.data.datasets[0].data.reduce((sum, val) => sum + val, 0);
+                            const percentage = total > 0 ? ((context.parsed.y / total) * 100).toFixed(1) : 0;
+                            return `占比: ${percentage}%`;
+                        },
+                        beforeBody: function(context) {
+                            // 如果没有有效数据（所有数据都是0），返回false来隐藏整个tooltip
+                            if (context.length === 0) {
+                                return false;
+                            }
+                            return '';
                         }
                     },
                     filter: function(tooltipItem) {
-                        // 过滤掉值为0的tooltip项
+                        // 过滤掉值为0的tooltip项，但保留图表中的日期显示
                         return tooltipItem.parsed.y !== 0;
                     }
                 }
@@ -406,6 +428,7 @@ class ChartRenderer {
                     borderWidth: 1,
                     callbacks: {
                         label: function(context) {
+                            // 如果值为0，显示0次而不是不显示
                             return `${context.dataset.label}: ${context.parsed.y.toLocaleString()} 次`;
                         }
                     }

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a local-deployed web application for visualizing 智谱AI开放平台 (Zhipu AI Open Platform) fee明细 data. The application focuses on Token usage analysis with interactive charts and filtering capabilities.
+This is a local-deployed web application for visualizing 智谱AI开放平台 (Zhipu AI Open Platform) fee明细 data. The application focuses on Token usage analysis with interactive charts and filtering capabilities. It processes Excel files containing billing data and provides comprehensive visualization through stacked bar charts and line charts.
 
 ## Quick Start Commands
 
@@ -30,24 +30,28 @@ The application follows a modular JavaScript architecture with clear separation 
 - Handles file upload events and coordinates data flow
 - Manages UI state and user interactions
 - Implements error handling and loading states
+- Coordinates the rendering of two fixed charts: Token usage stacked bar chart and API count line chart
 
 **DataProcessor Class (`js/dataProcessor.js`)**
 - Handles Excel file parsing using SheetJS
 - Implements data cleaning and transformation
 - Provides time-based and product-based data aggregation
 - Includes intelligent caching mechanism for performance
+- Processes four key fields: 账期, Tokens资源包名称, 抵扣用量, 请求次数 (仅API)
 
 **FilterManager Class (`js/filterManager.js`)**
 - Manages filter state and UI components
 - Handles time range (daily/weekly/monthly) filtering
-- Manages product type multi-selection filtering
+- Implements event-driven architecture for filter changes
 - Provides filter persistence using localStorage
+- Supports date range filtering with automatic default range setting
 
 **ChartRenderer Class (`js/chartRenderer.js`)**
 - Manages Chart.js instances and rendering
-- Supports line charts (time trends) and bar charts (product comparison)
-- Handles dynamic chart type switching
-- Implements responsive chart sizing
+- Supports stacked bar charts for Token usage by product over time
+- Supports line charts for API request count trends
+- Implements responsive chart sizing and interactive tooltips
+- Handles chart lifecycle management to prevent memory leaks
 
 ### Data Flow
 
@@ -68,8 +72,9 @@ File Parsing → Data Cleaning → Filtering → Chart Creation → User Interfa
 
 The application processes Excel files with the following key fields:
 - `账期` (Billing Period) - Date/time data for time-based analysis
-- `模型产品名称` (Model Product Name) - Product categorization
+- `Tokens资源包名称` (Token Resource Package Name) - Product categorization
 - `抵扣用量` (Deducted Usage) - Primary metric for Token usage analysis
+- `请求次数 (仅API)` (Request Count - API Only) - API call frequency data
 
 ## Performance Characteristics
 
@@ -82,12 +87,12 @@ The application processes Excel files with the following key fields:
 ## Module Interactions
 
 ### Event Flow
-1. User uploads Excel file via file input
-2. App triggers DataProcessor.parseExcel()
+1. User uploads Excel file via file input or drag-and-drop
+2. App triggers DataProcessor.parseExcel() with file validation
 3. Processed data flows to FilterManager for initialization
-4. FilterManager updates UI filter components
-5. App requests ChartRenderer to create initial chart
-6. User interactions trigger filter updates and chart re-rendering
+4. FilterManager sets default date range (last month) and updates UI
+5. App requests ChartRenderer to create two fixed charts
+6. User interactions with time range filter trigger data re-processing and chart re-rendering
 
 ### State Management
 - Application state is managed within the App class instance
@@ -171,9 +176,9 @@ npm run test:coverage
 
 ### Adding New Chart Types
 1. Add chart creation method to ChartRenderer class
-2. Update chart type switching logic
-3. Add UI controls for new chart type
-4. Update App class event handlers
+2. Update chart configuration methods for new chart type
+3. Add corresponding data aggregation methods in DataProcessor
+4. Update App class to integrate new chart rendering
 
 ### Extending Data Processing
 1. Add new aggregation methods to DataProcessor
@@ -186,3 +191,16 @@ npm run test:coverage
 - Use existing CSS custom properties for consistency
 - Test responsive behavior across device sizes
 - Maintain accessibility standards
+
+## Debugging Tools
+
+- **Global Instance**: Access app instance via `window.zpuApp` in browser console
+- **Detailed Logging**: Comprehensive console logging throughout all modules
+- **Error Handling**: Structured error reporting with user-friendly messages
+- **State Inspection**: Each module provides methods to inspect current state
+
+## Keyboard Shortcuts
+
+- `Ctrl+O`: Open file selection dialog
+- `Ctrl+S`: Export filtered data to CSV
+- `Ctrl+R`: Reset all filters

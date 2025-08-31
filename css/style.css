@@ -1,0 +1,358 @@
+/* 智谱AI费用分析 - 优化样式 */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+/* 导航栏样式 */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+/* 卡片通用样式 */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: none;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.card-header h5 {
+    margin: 0;
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* 统计卡片样式 */
+.card.text-white {
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.card.text-white:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card.text-white .card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+}
+
+.card.text-white .card-text {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+/* 统计卡片渐变背景 */
+.bg-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-success {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.bg-info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.bg-warning {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+/* 图表容器样式 */
+.chart-container {
+    position: relative;
+    height: 350px;
+    width: 100%;
+}
+
+#tokenUsageChart,
+#apiCountChart {
+    max-height: 350px;
+}
+
+/* 图表区域特殊样式 */
+.chart-container .card {
+    height: 100%;
+}
+
+.chart-container .card-body {
+    padding: 1rem;
+}
+
+/* 表单控件样式 */
+.form-select,
+.form-control {
+    border-radius: 0.375rem;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus,
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* 文件上传区域样式 */
+#fileInput {
+    border: 2px dashed #dee2e6;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+#fileInput:hover {
+    border-color: #0d6efd;
+    background-color: #f8f9fa;
+}
+
+#fileInput:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+
+/* 按钮样式优化 */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* 标签样式 */
+label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* 消息提示样式 */
+.error-message {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    margin-top: 1rem;
+    animation: slideIn 0.3s ease;
+}
+
+.success-message {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    margin-top: 1rem;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 空状态样式 */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #dee2e6;
+}
+
+.empty-state h5 {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+/* 加载动画 */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0.5rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .card.text-white .card-text {
+        font-size: 1.5rem;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+    
+    #tokenUsageChart,
+    #apiCountChart {
+        height: 300px !important;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn-primary {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    .form-select,
+    .form-control {
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .charts-container .row {
+        flex-direction: column;
+    }
+    
+    .charts-container .col-md-6 {
+        margin-bottom: 1rem;
+    }
+    
+    .card.text-white .card-text {
+        font-size: 1.25rem;
+    }
+    
+    .card-header h5 {
+        font-size: 1rem;
+    }
+}
+
+/* 图表标题特殊样式 */
+.chart-container .card-header h5 {
+    color: #343a40;
+    font-weight: 600;
+}
+
+/* 图表特殊样式 */
+.chart-container .card:first-child {
+    border-left: 4px solid #667eea;
+}
+
+.chart-container .card:last-child {
+    border-left: 4px solid #4facfe;
+}
+
+/* 图表响应式高度调整 */
+@media (min-width: 992px) {
+    .chart-container {
+        height: 400px;
+    }
+    
+    #tokenUsageChart,
+    #apiCountChart {
+        height: 400px !important;
+    }
+}
+
+/* 平滑滚动 */
+html {
+    scroll-behavior: smooth;
+}
+
+/* 选择框优化 */
+.form-select option {
+    padding: 0.5rem;
+}
+
+.form-select option:checked {
+    background-color: #0d6efd;
+    color: white;
+}
+
+/* 小型选择框样式 */
+.form-select-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    height: auto;
+    min-height: 2rem;
+}
+
+.form-select-sm:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智谱AI费用明细可视化</title>
+    <link href="lib/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- 头部导航 -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="#">智谱AI费用分析</a>
+            </div>
+        </nav>
+
+        <!-- 主要内容 -->
+        <div class="container mt-4">
+            <!-- 数据上传区域 -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title">数据导入</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="file" id="fileInput" accept=".xlsx,.xls" class="form-control" placeholder="选择Excel文件">
+                        </div>
+                        <div class="col-md-6">
+                            <button id="uploadBtn" class="btn btn-primary">上传并分析</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 筛选控制区域 -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title">数据筛选</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="timeRange">时间范围</label>
+                            <select id="timeRange" class="form-select form-select-sm">
+                                <option value="daily">按日</option>
+                                <option value="weekly">按周</option>
+                                <option value="monthly">按月</option>
+                            </select>
+                        </div>
+                        <div class="col-md-9">
+                            <!-- 留空以保持布局平衡 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据统计卡片 -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <h5 class="card-title">总Token用量</h5>
+                            <p class="card-text" id="totalTokens">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <h5 class="card-title">记录数量</h5>
+                            <p class="card-text" id="recordCount">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info">
+                        <div class="card-body">
+                            <h5 class="card-title">资源包类型</h5>
+                            <p class="card-text" id="productCount">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <h5 class="card-title">时间范围</h5>
+                            <p class="card-text" id="dateRange">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图表展示区域 - 两个图表垂直排列 -->
+            <div class="mb-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title">Token消耗量分组统计</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="tokenUsageChart" width="400" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">API请求次数趋势</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="apiCountChart" width="400" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="lib/xlsx.full.min.js"></script>
+    <script src="lib/chart.js"></script>
+    <script src="lib/bootstrap.min.js"></script>
+    <script src="js/dataProcessor.js"></script>
+    <script src="js/filterManager.js"></script>
+    <script src="js/chartRenderer.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

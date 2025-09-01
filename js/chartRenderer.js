@@ -27,7 +27,7 @@ class ChartRenderer {
         }
 
         const canvas = ctx.getContext('2d');
-        
+
         // 如果是分组数据（按资源包分组），转换为堆叠柱状图
         if (data.datasets && Array.isArray(data.datasets)) {
             // 计算每个时间点的总用量
@@ -36,7 +36,7 @@ class ChartRenderer {
                     return sum + (dataset.data[timeIndex] || 0);
                 }, 0);
             });
-            
+
             // 创建堆叠柱状图配置
             const chartConfig = {
                 type: 'bar',
@@ -59,10 +59,10 @@ class ChartRenderer {
             this.charts[containerId] = chart;
             return chart;
         }
-        
+
         // 如果是简单数据，创建统一颜色的柱状图
         const values = data.values || [];
-        
+
         const chartConfig = {
             type: 'bar',
             data: {
@@ -82,7 +82,7 @@ class ChartRenderer {
 
         const chart = new Chart(canvas, chartConfig);
         this.charts[containerId] = chart;
-        
+
         return chart;
     }
 
@@ -100,7 +100,7 @@ class ChartRenderer {
         }
 
         const canvas = ctx.getContext('2d');
-        
+
         const chartConfig = {
             type: 'line',
             data: {
@@ -125,11 +125,10 @@ class ChartRenderer {
 
         const chart = new Chart(canvas, chartConfig);
         this.charts[containerId] = chart;
-        
+
         return chart;
     }
 
-    
     // 获取堆叠Token用量图表配置
     getStackedTokenUsageChartOptions() {
         return {
@@ -214,7 +213,7 @@ class ChartRenderer {
                         callback: function(value, index) {
                             const labels = this.chart.data.labels;
                             if (!labels || labels.length === 0) return '';
-                            
+
                             // 只显示第一个和最后一个标签
                             if (index === 0 || index === labels.length - 1) {
                                 return labels[index];
@@ -351,7 +350,7 @@ class ChartRenderer {
                         callback: function(value, index) {
                             const labels = this.chart.data.labels;
                             if (!labels || labels.length === 0) return '';
-                            
+
                             // 只显示第一个和最后一个标签
                             if (index === 0 || index === labels.length - 1) {
                                 return labels[index];
@@ -495,27 +494,26 @@ class ChartRenderer {
         };
     }
 
-    
     // 创建分组数据集
     createGroupedDatasets(groupedData) {
         const datasets = [];
         const products = new Set();
-        
+
         // 收集所有产品名称
         Object.values(groupedData).forEach(timeData => {
             Object.keys(timeData).forEach(product => {
                 products.add(product);
             });
         });
-        
+
         const productArray = Array.from(products);
-        
+
         // 为每个产品创建数据集
         productArray.forEach((product, index) => {
             const data = Object.keys(groupedData).map(timeKey => {
                 return groupedData[timeKey][product] || 0;
             });
-            
+
             const color = this.getColorByIndex(index);
             datasets.push({
                 label: product,
@@ -527,7 +525,7 @@ class ChartRenderer {
                 borderSkipped: false
             });
         });
-        
+
         return {
             labels: Object.keys(groupedData),
             datasets: datasets
@@ -548,7 +546,7 @@ class ChartRenderer {
             `rgba(255, 99, 255, ${alpha})`,
             `rgba(99, 255, 132, ${alpha})`
         ];
-        
+
         return colors[index % colors.length];
     }
 
@@ -558,7 +556,7 @@ class ChartRenderer {
             console.warn('updateChart: 数据格式不正确');
             return;
         }
-        
+
         const chart = this.charts[containerId];
         if (!chart) {
             console.error(`图表 ${containerId} 不存在`);
@@ -664,13 +662,13 @@ class ChartRenderer {
 
         const dataset = chart.data.datasets[0];
         const data = dataset.data;
-        
+
         if (!data || data.length === 0) {
             return null;
         }
 
         const values = data.filter(v => typeof v === 'number');
-        
+
         return {
             min: Math.min(...values),
             max: Math.max(...values),

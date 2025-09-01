@@ -6,7 +6,7 @@ class App {
         this.currentData = [];
         this.isLoading = false;
         this.errorMessages = [];
-        
+
         this.initializeEventListeners();
         this.initializeUI();
         this.loadSavedState();
@@ -80,7 +80,7 @@ class App {
             e.preventDefault();
             fileInput.style.borderColor = '#dee2e6';
             fileInput.style.backgroundColor = '';
-            
+
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 fileInput.files = files;
@@ -134,7 +134,7 @@ class App {
             const fileInput = document.getElementById('fileInput');
             file = fileInput.files[0];
         }
-        
+
         if (!file) {
             this.showError('请选择一个Excel文件');
             return;
@@ -143,15 +143,15 @@ class App {
         try {
             this.showLoading(true);
             this.clearError();
-            
+
             console.log('开始处理文件:', file.name);
-            
+
             // 解析Excel文件
             this.currentData = await this.dataProcessor.parseExcel(file);
-            
+
             console.log('原始数据处理完成，记录数:', this.currentData.length);
             console.log('处理后的数据样本:', this.currentData.slice(0, 2));
-            
+
             if (this.currentData.length === 0) {
                 throw new Error('文件中没有有效数据 - 请检查Excel文件格式和字段名称');
             }
@@ -159,29 +159,29 @@ class App {
             // 验证数据格式
             const validation = this.dataProcessor.validateData(this.currentData);
             console.log('数据验证结果:', validation);
-            
+
             if (!validation.isValid) {
                 throw new Error(`数据格式验证失败: ${validation.errors.join(', ')}`);
             }
 
             // 初始化筛选器
             this.filterManager.initializeFilters(this.currentData);
-            
+
             // 更新统计信息
             this.updateStatistics();
-            
+
             // 渲染三个固定图表
             this.renderAllCharts();
-            
+
             // 隐藏空状态
             this.hideEmptyState();
-            
+
             // 显示成功消息
             this.showSuccess(`成功导入 ${this.currentData.length} 条记录`);
-            
+
             // 保存状态
             this.saveState();
-            
+
         } catch (error) {
             console.error('文件处理失败:', error);
             this.showError(`文件处理失败: ${error.message}`);
@@ -198,13 +198,13 @@ class App {
     // 处理筛选器变化
     handleFilterChange(filters) {
         console.log('筛选器变化:', filters);
-        
+
         // 保存筛选器状态
         this.filterManager.saveToLocalStorage();
-        
+
         // 更新统计信息
         this.updateStatistics();
-        
+
         // 重新渲染所有图表
         this.renderAllCharts();
     }
@@ -213,14 +213,14 @@ class App {
     updateStatistics(customData = null) {
         const data = customData || this.currentData;
         const filteredData = this.filterManager.applyFilters(data);
-        
+
         const stats = this.dataProcessor.getStatistics(filteredData);
-        
+
         // 更新统计卡片
         this.updateStatCard('totalTokens', stats.totalTokens.toLocaleString());
         this.updateStatCard('recordCount', stats.recordCount.toLocaleString());
         this.updateStatCard('productCount', stats.productCount.toLocaleString());
-        
+
         // 更新时间范围
         if (stats.dateRange) {
             const dateRangeText = `${stats.dateRange.min.toLocaleDateString()} - ${stats.dateRange.max.toLocaleDateString()}`;
@@ -251,7 +251,7 @@ class App {
 
         const filters = this.filterManager.getFilters();
         const filteredData = this.filterManager.applyFilters(this.currentData);
-        
+
         if (filteredData.length === 0) {
             this.showWarning('当前筛选条件下没有数据');
             return;
@@ -260,7 +260,7 @@ class App {
         try {
             // 渲染Token消耗量分组柱状图
             this.renderTokenUsageChart(filteredData, filters);
-            
+
             // 渲染API请求次数折线图
             this.renderApiCountChart(filteredData, filters);
 
@@ -276,7 +276,7 @@ class App {
     renderTokenUsageChart(data, filters) {
         // 使用新的分组聚合方法
         const groupedData = this.dataProcessor.aggregateTokenUsageByTimeAndProduct(data, filters.timeRange);
-        
+
         // 转换为图表可用的格式
         const chartData = this.chartRenderer.createGroupedDatasets(groupedData);
 
@@ -286,7 +286,7 @@ class App {
     // 渲染API请求次数图表
     renderApiCountChart(data, filters) {
         const apiAggregated = this.dataProcessor.aggregateApiCountByTime(data, filters.timeRange);
-        
+
         const chartData = {
             labels: Object.keys(apiAggregated),
             values: Object.values(apiAggregated)
@@ -295,12 +295,11 @@ class App {
         this.chartRenderer.createApiCountChart(chartData, 'apiCountChart');
     }
 
-    
     // 显示/隐藏加载状态
     showLoading(show) {
         this.isLoading = show;
         const fileInput = document.getElementById('fileInput');
-        
+
         if (fileInput) {
             if (show) {
                 fileInput.disabled = true;
@@ -316,17 +315,17 @@ class App {
     showError(message) {
         console.error('错误:', message);
         this.errorMessages.push(message);
-        
+
         // 创建错误提示
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-message';
         errorDiv.textContent = message;
-        
+
         // 添加到页面
         const cardBody = document.querySelector('.card-body');
         if (cardBody) {
             cardBody.appendChild(errorDiv);
-            
+
             // 3秒后自动消失
             setTimeout(() => {
                 errorDiv.remove();
@@ -339,12 +338,12 @@ class App {
         const successDiv = document.createElement('div');
         successDiv.className = 'success-message';
         successDiv.textContent = message;
-        
+
         // 添加到页面
         const cardBody = document.querySelector('.card-body');
         if (cardBody) {
             cardBody.appendChild(successDiv);
-            
+
             // 3秒后自动消失
             setTimeout(() => {
                 successDiv.remove();
@@ -398,13 +397,13 @@ class App {
             event.preventDefault();
             document.getElementById('fileInput').click();
         }
-        
+
         // Ctrl+S: 导出数据
         if (event.ctrlKey && event.key === 's') {
             event.preventDefault();
             this.exportData();
         }
-        
+
         // Ctrl+R: 重置筛选器
         if (event.ctrlKey && event.key === 'r') {
             event.preventDefault();
@@ -421,7 +420,7 @@ class App {
 
         const filteredData = this.filterManager.applyFilters(this.currentData);
         const filename = `智谱AI费用明细_${new Date().toISOString().split('T')[0]}.csv`;
-        
+
         try {
             this.dataProcessor.exportToCSV(filteredData, filename);
             this.showSuccess('数据导出成功');
@@ -464,13 +463,13 @@ class App {
         this.updateStatistics();
         this.showEmptyState();
         this.clearError();
-        
+
         // 清除文件输入
         const fileInput = document.getElementById('fileInput');
         if (fileInput) {
             fileInput.value = '';
         }
-        
+
         // 清除本地存储
         localStorage.removeItem('zpu-app-state');
         this.filterManager.clearLocalStorage();
@@ -500,10 +499,10 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         const app = new App();
         console.log('智谱AI费用分析应用初始化完成');
-        
+
         // 将app实例暴露到全局作用域，便于调试
         window.zpuApp = app;
-        
+
     } catch (error) {
         console.error('应用初始化失败:', error);
         // 显示初始化失败消息

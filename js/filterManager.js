@@ -23,7 +23,7 @@ class FilterManager {
 
         // 重置筛选器（会设置默认时间范围为最近一个月）
         this.resetFilters();
-        
+
         console.log('筛选器初始化完成，日期范围:', this.availableDates.length, '天');
     }
 
@@ -57,9 +57,9 @@ class FilterManager {
     updateFilter(filterType, value) {
         const oldValue = this.filters[filterType];
         this.filters[filterType] = value;
-        
+
         console.log(`筛选器更新: ${filterType} = ${value}`);
-        
+
         this.emit('filterChange', this.filters);
     }
 
@@ -73,7 +73,7 @@ class FilterManager {
         // 设置默认时间范围为最近一个月
         const oneMonthAgo = new Date();
         oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-        
+
         this.filters = {
             timeRange: 'daily',
             dateRange: {
@@ -81,7 +81,7 @@ class FilterManager {
                 end: new Date()
             }
         };
-        
+
         // 更新UI
         this.updateFilterUI();
     }
@@ -105,7 +105,7 @@ class FilterManager {
                 activeFilters: []
             };
         }
-        
+
         const filteredData = this.applyFilters(data);
         const originalData = data;
 
@@ -120,7 +120,7 @@ class FilterManager {
     // 获取活跃的筛选器
     getActiveFilters() {
         const activeFilters = [];
-        
+
         if (this.filters.dateRange) {
             activeFilters.push({
                 type: 'dateRange',
@@ -128,7 +128,7 @@ class FilterManager {
                 value: `${this.filters.dateRange.start.toLocaleDateString()} - ${this.filters.dateRange.end.toLocaleDateString()}`
             });
         }
-        
+
         return activeFilters;
     }
 
@@ -149,7 +149,7 @@ class FilterManager {
         if (this.availableDates.length === 0) {
             return null;
         }
-        
+
         return {
             start: this.availableDates[0],
             end: this.availableDates[this.availableDates.length - 1]
@@ -193,16 +193,16 @@ class FilterManager {
             return date && date >= startDate;
         });
     }
-    
+
     // 设置默认时间范围为最近一个月
     setDefaultDateRange() {
         const oneMonthAgo = new Date();
         oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
         oneMonthAgo.setHours(0, 0, 0, 0);
-        
+
         const now = new Date();
         now.setHours(23, 59, 59, 999);
-        
+
         this.setDateRange(oneMonthAgo, now);
     }
 
@@ -281,11 +281,11 @@ class FilterManager {
         if (config.filters) {
             this.filters = { ...this.filters, ...config.filters };
         }
-        
+
         if (config.availableDates) {
             this.availableDates = config.availableDates;
         }
-        
+
         this.updateFilterUI();
         this.emit('filterChange', this.filters);
     }
@@ -293,14 +293,14 @@ class FilterManager {
     // 验证筛选器配置
     validateFilters() {
         const errors = [];
-        
+
         if (this.filters.dateRange) {
             const { start, end } = this.filters.dateRange;
             if (start > end) {
                 errors.push('开始日期不能晚于结束日期');
             }
         }
-        
+
         return {
             isValid: errors.length === 0,
             errors
@@ -313,14 +313,14 @@ class FilterManager {
             timeRange: this.filters.timeRange,
             hasDateRange: !!this.filters.dateRange
         };
-        
+
         if (this.filters.dateRange) {
             summary.dateRange = {
                 start: this.filters.dateRange.start.toLocaleDateString(),
                 end: this.filters.dateRange.end.toLocaleDateString()
             };
         }
-        
+
         return summary;
     }
 }
